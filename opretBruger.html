@@ -1,0 +1,57 @@
+<HTML>
+<head>
+    <!-- Jeg linker siden til bootstrap for at mine fonts kan blive vist -->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title> "Quiz log ind side" </title>
+
+
+</head>
+
+<body>
+
+<!-- Der oprettes felter til at udfylde nye brugeroplysninger -->
+
+<div class="row">
+    <div class="Wrapper center-block col-md-3 vertical-center" style="float:none">
+
+        <div class="row">
+            <h1>
+                DØK Eksamens Quiz
+            </h1>
+            <div id="error" style="display:none; background-color:red; padding:5px; padding: 5px; border: 2px solid #9a0303;">
+
+            </div>
+            <div id="success" style="display:none; background-color:#13ff1d; padding:5px; padding: 5px; border: 2px solid #219a22;">
+
+            </div>
+            <form>
+                <input type="Text" placeholder=" Brugernavn" id="username" class= "form-control"> <br>
+
+                <input type="password" placeholder=" Kodeord" id="password" class= "form-control"> <br>
+
+                <input type="password" placeholder=" Gentag kodeord" id="passwordAgain" class= "form-control"> <br>
+
+                <input type="submit" value="Opret bruger" class= "btn pull-right" id="createUserBtn"> <br>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script src="lib/js/jquery-3.2.1.js"></script>
+<script src="lib/js/settings.js"></script>
+<script src="lib/js/createUser.js"></script>
+</body>
+</HTML>
