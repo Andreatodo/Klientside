@@ -1,0 +1,162 @@
+<HTML>
+<head>
+
+    <!-- Jeg linker siden til bootstrap for at mine fonts kan blive vist -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title> "Rediger quiz" </title>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">DØK Eksamens Quiz</a>
+        </div>
+
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+            <ul class="nav navbar-nav navbar-right">
+                <li id="userInfo"></li>
+                <li><a href="index.html">Log ud</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="Wrapper1 col-md-3" style="border-right: 1px solid #ccc">
+    <ul id="courses">
+    </ul>
+</div>
+
+
+<div class="content col-md-9">
+    <form id="quizForm">
+        <table id="quizTable">
+            <tr>
+                <td><h1 id="quizTitle"></h1></td>
+            </tr>
+        </table>
+    </form>
+    <a href="#" id="addQuestion">Tilføj spørgsmål</a>
+
+
+</div>
+    <script src="lib/js/settings.js"></script>
+    <script src="lib/js/getCourses.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#quizTitle").text(localStorage.getItem("quizName"));
+            var typeText = localStorage.getItem("type") === "1" ? "Admin" : "Studerende";
+            $("#userInfo").text("Brugernavn: " + localStorage.getItem("username") + " Brugertype: " + typeText )
+        });
+        var quizID = localStorage.getItem("quizID");
+        var jsonData = null;
+        var quesionsAdded = 0;
+        $.ajax({
+            type: 'GET',
+            url: apiURL + '/api/question/' + quizID,
+            dataType: 'json',
+            //whatever you need
+            headers: {"Authorization": localStorage.getItem("token")},
+            success: function (data, textStatus, jqXHR) {
+                if(jqXHR.status === 204){
+                    $(".content").append("<li>Der er ingen spørgsmål til denne quiz</li>");
+                    return;
+                }
+                jsonData = JSON.parse(data);
+                console.log(jsonData);
+                $.each(jsonData, function(i, item) {
+                    $("#quizTable").append("<tr><td><b>" + item.question + "</b></td></tr>");
+                    $.each(item.options, function(j, option){
+                        $("#quizTable").append("<tr>" +
+                            "<td>" +
+                            "<label>" +
+                            "<input type='radio' name='"+item.questionId+"' value='"+option.optionId+"'>" + option.option + "" +
+                            "</label>" +
+                            "</td>" +
+                            "</tr>");
+                    });
+                });
+            }
+        });
+        $("#addQuestion").click(function(){
+            if($("#questionTitle").length ){
+                var options = [];
+                var correctSelected = false;
+                $("input[name='options[]']").each(function() {
+                    if($(this).prev().is(':checked')){
+                        correctSelected = true;
+                    }
+                    let option = {
+                        isCorrect: $(this).prev().is(':checked') ? 1 : 0,
+                        option: $(this).val()
+                    };
+                    options.push(option);
+                });
+                if(!correctSelected){
+                    alert("Vælg et rigtigt svar.");
+                    return;
+                }
+                let question = {
+                    question: $("#questionTitle").val(),
+                    questionToQuizId: quizID
+                };
+                console.log(JSON.stringify(question));
+                console.log(JSON.stringify(options));
+                $.ajax({
+                    type: 'POST',
+                    url: apiURL + '/question',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    headers: {"Authorization": localStorage.getItem("token")},
+                    data: JSON.stringify(question),
+
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        for(var i = 0; i < options.length; i++){
+                            options[i].optionToQuestionId = data.questionId;
+                            $.ajax({
+                                type: 'POST',
+                                url: apiURL + '/option',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                headers: {"Authorization": localStorage.getItem("token")},
+                                data: JSON.stringify(options[i]),
+                                success: function (optionData) {
+                                    console.log(optionData);
+                                }
+                            });
+                        }
+                        location.reload();
+                    }
+                });
+            }
+            $("#quizTable").append("<tr class='newQuestion'><td><input type='text' name='questionTitle' id='questionTitle' placeholder='Spørgsmål'></td></tr>");
+            $("#quizTable").append("<tr class='newQuestion'><td><input type='radio' name='"+quesionsAdded+"'><input type='text' name='options[]' placeholder='Svarmulighed 1'></td></tr>");
+            $("#quizTable").append("<tr class='newQuestion'><td><input type='radio' name='"+quesionsAdded+"'><input type='text' name='options[]' placeholder='Svarmulighed 2'></td></tr>");
+            $("#quizTable").append("<tr class='newQuestion'><td><input type='radio' name='"+quesionsAdded+"'><input type='text' name='options[]' placeholder='Svarmulighed 3'></td></tr>");
+            $("#quizTable").append("<tr class='newQuestion'><td><input type='radio' name='"+quesionsAdded+"'><input type='text' name='options[]' placeholder='Svarmulighed 4'></td></tr>");
+        });
+    </script>
+</body>
+</HTML>
