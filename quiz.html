@@ -62,7 +62,7 @@
 
 </div>
 <script src="lib/js/settings.js"></script>
-<script src="lib/js/getCourses.js"></script>
+<script src="lib/js/listCourses.js"></script>
 <script>
     $(document).ready(function(){
         $("#quizTitle").text(localStorage.getItem("quizName"));
@@ -92,6 +92,26 @@
                 });
             });
         }
+    });
+    $("#quizForm").submit(function (e) {
+        var correctAmount = 0;
+        e.preventDefault();
+        $("label").css("color", "");
+        var formData = $(this).serializeArray();
+        $.each(formData, function(i, item){
+            console.log(item);
+            var checkedAnswer = $("[name="+item.name+"]:checked");
+            var selectedIndex = checkedAnswer.val();
+            console.log(i + " " + selectedIndex);
+            if(jsonData[i].options[selectedIndex].isCorrect){
+                checkedAnswer.parent().css("color", "green");
+                correctAmount++;
+            }else{
+                checkedAnswer.parent().css("color", "red");
+            }
+        });
+        $("#correctAmount").remove();
+        $(".content").prepend("<h2 id='correctAmount'>Du fik " + correctAmount + " rigtige!</h2>");
     });
 </script>
 </body>
