@@ -39,6 +39,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
             <ul class="nav navbar-nav navbar-right">
+                <li id="userInfo"></li>
                 <!-- jeg laver et log ud link som fører dem til log ind siden -->
                 <li><a href="index.html">Log ud</a></li>
             </ul>
@@ -59,5 +60,13 @@
 </body>
 
 <script src="lib/js/settings.js"></script>
-<script src="lib/js/getCourses.js"></script>
+<script src="lib/js/listCourses.js"></script>
+
+<!-- En funktion som logger brugerens type, således at brugeroplysninger kan blive vist på siden ved log ind -->
+<script>
+    $(document).ready(function(){
+        var typeText = localStorage.getItem("type") === "1" ? "Admin" : "Studerende";
+        $("#userInfo").text("Brugernavn: " + localStorage.getItem("username") + " Brugertype: " + typeText )
+    });
+</script>
 </HTML>

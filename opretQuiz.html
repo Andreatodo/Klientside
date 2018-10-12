@@ -2,18 +2,22 @@
 <head>
 
     <!-- Jeg linker siden til bootstrap for at mine fonts kan blive vist -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <script
             src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <title> "Quiz" </title>
 </head>
@@ -24,7 +28,8 @@
     <div class="container-fluid">
 
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -49,21 +54,205 @@
     <div id="error" style="display:none; background-color:red; padding:5px; padding: 5px; border: 2px solid #9a0303;">
 
     </div>
-    <div id="success" style="display:none; background-color:#13ff1d; padding:5px; padding: 5px; border: 2px solid #219a22;">
+    <div id="success"
+         style="display:none; background-color:#13ff1d; padding:5px; padding: 5px; border: 2px solid #219a22;">
 
     </div>
     <form>
-        <input type="Text" placeholder="Quiz navn" class= "form-control" name="title" id="title"> <br>
-        <input type="Text" placeholder="Quiz beskrivelse" class= "form-control" name="description" id="description"> <br>
-        <input type="submit" value="Opret quiz" class= "btnpull" id="createQuizBtn">
+        <input type="Text" placeholder="Quiz navn" class="form-control" name="title" id="title" required> <br>
+        <hr>
+        <table id="answersForm">
+            <tr>
+                <td><input type="Text" placeholder="Spørgsmål" class="form-control" name="question" class="answerRow"
+                           id="questionText"/></td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>
+                <td><input type="Text" placeholder="Svar 1" class="form-control" name="options[]" class="answerRow"/>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>
+                <td><input type="Text" placeholder="Svar 2" class="form-control" name="options[]" class="answerRow"/>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>
+                <td><input type="Text" placeholder="Svar 3" class="form-control" name="options[]" class="answerRow"/>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>
+                <td><input type="Text" placeholder="Svar 4" class="form-control" name="options[]" class="answerRow"/>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="button" value="Tilføj spørgsmål" id="addQuestionBtn"/></td>
+            </tr>
+        </table>
+        <input type="submit" value="Opret quiz" class="btnpull" id="createQuizBtn">
+        <input type="button" value="Tilbage til oversigt" class="btnpull" id="backToMenu">
     </form>
 </div>
 <script src="lib/js/settings.js"></script>
-<script src="lib/js/createQuiz.js"></script>
+<!--<script src="lib/js/createQuiz.js"></script>-->
+
 <script>
-    $(document).ready(function(){
+    let questionsToAdd = [];
+    $("#backToMenu").click(function(){
+       window.location.href = "startSide.html";
+    });
+
+    function questionAddedButton(addMoreQuestions) {
+        if (typeof addMoreQuestions === "undefined" || addMoreQuestions === null) {
+            addMoreQuestions = true;
+        }
+        let options = [];
+        let correctSelected = false;
+        $("input[name='options[]']").each(function () {
+            if (!$(this).val()) {
+                return true; //If field is empty don't add it
+            }
+            if ($(this).parent().prev().children().first().is(':checked')) {
+                correctSelected = true;
+            }
+            let option = {
+                isCorrect: $(this).parent().prev().children().first().is(':checked') ? 1 : 0,
+                option: $(this).val()
+            };
+            options.push(option);
+        });
+        if (!correctSelected) {
+            alert("Vælg et rigtigt svar.");
+            return false;
+        }
+        let question = {
+            question: $("#questionText").val(),
+            options: options,
+        };
+        questionsToAdd.push(question);
+        $('td input').each(function () {
+            $(this).prop("disabled", true);
+            $(this).removeAttr("name");
+            $(this).removeAttr("id");
+        });
+        if (addMoreQuestions) {
+            $("#answersForm").append('<tr>\n' +
+                '                <td><input type="Text" placeholder="Spørgsmål" class="form-control" name="question" class="answerRow" id="questionText"/></td>\n' +
+                '            </tr>\n' +
+                '            <tr>\n' +
+                '                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>\n' +
+                '                <td><input type="Text" placeholder="Svar 1" class="form-control" name="options[]" class="answerRow" /></td>\n' +
+                '            </tr>\n' +
+                '            <tr>\n' +
+                '                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>\n' +
+                '                <td><input type="Text" placeholder="Svar 2" class="form-control" name="options[]" class="answerRow" /></td>\n' +
+                '            </tr>\n' +
+                '            <tr>\n' +
+                '                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>\n' +
+                '                <td><input type="Text" placeholder="Svar 3" class="form-control" name="options[]" class="answerRow" /></td>\n' +
+                '            </tr>\n' +
+                '            <tr>\n' +
+                '                <td><input type="radio" name="correct" class="answerRadio answerRow"/></td>\n' +
+                '                <td><input type="Text" placeholder="Svar 4" class="form-control" name="options[]" class="answerRow" /></td>\n' +
+                '            </tr>\n' +
+                '            <tr>\n' +
+                '                <td><input type="button" value="Tilføj spørgsmål" id="addQuestionBtn"/></td>\n' +
+                '            </tr>');
+            $("#addQuestionBtn").on("click", questionAddedButton);
+        }
+        return true;
+    }
+
+    $("#addQuestionBtn").on("click", questionAddedButton);
+
+    function submitOptions(questionID, options) {
+        for (var i = 0; i < options.length; i++) {
+            options[i].optionToQuestionId = questionID;
+            console.log("SENDING OPTION: ", options[i]);
+            $.ajax({
+                type: 'POST',
+                url: apiURL + '/option',
+                dataType: 'json',
+                contentType: 'application/json',
+                headers: {"Authorization": localStorage.getItem("token")},
+                data: JSON.stringify(options[i]),
+                success: function (optionData) {
+                    console.log("Data returned from option:", optionData);
+                }
+            });
+        }
+    }
+
+    function submitQuestions(quizID) {
+        questionsToAdd.forEach(function (question) {
+            question.questionToQuizId = quizID;
+            console.log("Sending question:", question);
+            //console.log("Sending this quizID:", quizID);
+            $.ajax({
+                type: 'POST',
+                url: apiURL + '/question',
+                dataType: 'json',
+                contentType: 'application/json',
+                headers: {"Authorization": localStorage.getItem("token")},
+                data: JSON.stringify(question),
+                success: function (data) {
+                    console.log("Data returned from question", data);
+                    submitOptions(JSON.parse(data).questionId, question.options);
+                }
+            });
+        });
+    }
+
+    $("#createQuizBtn").click(function (e) {
+        e.preventDefault();
+        let quiz = {
+            quizTitle: $("#title").val(),
+            quizDescription: $("#description").val(),
+            createdBy: localStorage.getItem("username"),
+            courseId: localStorage.getItem("courseID"),
+            questionCount: 0,
+        };
+        console.log("Creating quiz: ", quiz);
+        if ($("#questionText").val()) {
+            if (!questionAddedButton(false)) {
+                return false;
+            }
+        }
+        $.ajax({
+            type: 'POST',
+            url: apiURL + '/quiz/',
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {"Authorization": localStorage.getItem("token")},
+            data: JSON.stringify(quiz),
+
+            //Succes boks der vises hvis quizzen er oprettet
+            success: function (data) {
+                $("#error").hide();
+                $("#success").empty();
+                $("#success").show();
+                $("#success").append("<p>Quiz oprettet</p>");
+                //window.location.href = "startSide.html";
+                console.log("Returned from quiz: ", data);
+                submitQuestions(JSON.parse(data).quizId);
+
+            },
+
+            //error boks der vises hvis quizzen ikke kunne oprettes
+            error: function (data) {
+                $("#error").empty();
+                $("#error").show();
+                $("#error").append("<p>Quizzen blev ikke oprettet</p>");
+            }
+        })
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
         var typeText = localStorage.getItem("type") === "1" ? "Admin" : "Studerende";
-        $("#userInfo").text("Brugernavn: " + localStorage.getItem("username") + " Brugertype: " + typeText )
+        $("#userInfo").text("Brugernavn: " + localStorage.getItem("username") + " Brugertype: " + typeText)
     });
 </script>
 </body>

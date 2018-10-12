@@ -20,6 +20,82 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="startSide.html">DØK Eksamens Quiz</a>
+        </div>
 
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+            <ul class="nav navbar-nav navbar-right">
+                <li id="userInfo"></li>
+                <li><a href="index.html">Log ud</a></li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <div class="Wrapper1 col-md-3" style="border-right: 1px solid #ccc">
+    <ul id="courses">
+    </ul>
+    </div>
+
+
+    <div class="content col-md-9">
+        <table id="quizTable">
+        <tr>
+            <td><h3>Quiznavn</h3></td>
+            <td><h3 style="margin-left:5px;"><a href="opretQuiz.html" id="createQuizLink" style="display:none">+</a></h3></td>
+        </tr>
+    </table>
+
+
+</div>
+    <script src="lib/js/settings.js"></script>
+    <script src="lib/js/listCourses.js"></script>
+    <script src="lib/js/listQuizzes.js"></script>
+    <script>
+
+        $(document).ready(function(){
+        if(localStorage.getItem("type") === "1"){
+            $("#createQuizLink").show();
+        }
+        var typeText = localStorage.getItem("type") === "1" ? "Admin" : "Studerende";
+        $("#userInfo").text("Brugernavn: " + localStorage.getItem("username") + " Brugertype: " + typeText )
+    });
+    $(document).on("click", ".removeQuiz", function(){
+        var parentElement = $(this).parent().parent();
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8080/api/quiz/' + parentElement.attr("data-id"),
+            headers: {"Authorization": localStorage.getItem("token")},
+            success: function (data, textStatus, jqXHR) {
+                console.log("Quiz deleted");
+                parentElement.remove();
+            }
+        });
+    });
+
+    $(document).on("click", ".editQuiz", function(){
+        localStorage.setItem("quizID", $(this).parent().parent().attr("data-id"));
+        localStorage.setItem("quizName", $(this).parent().parent().attr("data-name"));
+        window.location.href = "redigerQuiz.html";
+    });
+
+    $(document).on("click", ".takeQuiz", function(){
+        localStorage.setItem("quizID", $(this).parent().parent().attr("data-id"));
+        localStorage.setItem("quizName", $(this).parent().parent().attr("data-name"));
+        window.location.href = "quiz.html";
+    });
+
+</script>
 </body>
-</html></HTML>
+</HTML>
