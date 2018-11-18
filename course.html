@@ -37,7 +37,7 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li id="userInfo"></li>
-                <li><a href="index.html">Log ud</a></li>
+                <li><a href="logout.html">Log ud</a></li>
             </ul>
         </div>
     </div>
@@ -64,6 +64,8 @@
     <script src="lib/js/listQuizzes.js"></script>
     <script>
 
+
+    //Funktionen tjekker om brugeren der logger ind er admin eller ej dvs såfremt brugeren er typen 1 i databasen er brugeren admin
         $(document).ready(function(){
         if(localStorage.getItem("type") === "1"){
             $("#createQuizLink").show();
@@ -71,6 +73,8 @@
         var typeText = localStorage.getItem("type") === "1" ? "Admin" : "Studerende";
         $("#userInfo").text("Brugernavn: " + localStorage.getItem("username") + " Brugertype: " + typeText )
     });
+
+    //Såfremt brugeren logger ind som admin, får denne adgang til funktionen slet quiz, metoden er kaldt på serveren via stien quiz
     $(document).on("click", ".removeQuiz", function(){
         var parentElement = $(this).parent().parent();
         $.ajax({
@@ -83,7 +87,6 @@
             }
         });
     });
-
     $(document).on("click", ".editQuiz", function(){
         localStorage.setItem("quizID", $(this).parent().parent().attr("data-id"));
         localStorage.setItem("quizName", $(this).parent().parent().attr("data-name"));

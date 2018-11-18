@@ -43,7 +43,7 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li id="userInfo"></li>
-                <li><a href="index.html">Log ud</a></li>
+                <li><a href="logout.html">Log ud</a></li>
             </ul>
         </div>
     </div>
@@ -98,7 +98,10 @@
 <!--<script src="lib/js/createQuiz.js"></script>-->
 
 <script>
+
+
     let questionsToAdd = [];
+
     $("#backToMenu").click(function(){
        window.location.href = "startSide.html";
     });
@@ -111,7 +114,7 @@
         let correctSelected = false;
         $("input[name='options[]']").each(function () {
             if (!$(this).val()) {
-                return true; //If field is empty don't add it
+                return true; //Hvis feltet er tomt, så lad vær at tilføje svarmuligheden
             }
             if ($(this).parent().prev().children().first().is(':checked')) {
                 correctSelected = true;
@@ -163,6 +166,7 @@
         }
         return true;
     }
+
 
     $("#addQuestionBtn").on("click", questionAddedButton);
 
